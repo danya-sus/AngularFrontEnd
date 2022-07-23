@@ -1,0 +1,69 @@
+<h1 id="tableLabel">Поиск операций</h1>
+
+<div class="menu">
+  <div class="document">
+    <p>По номеру документа, удостоверяющего личность</p>
+    <input type="text" (click)="clearTicketNum()" name="docNumber" placeholder="Введите номер документа" [(ngModel)]="dNumber" #docNumber="ngModel"/><br />
+    <button [disabled]="docNumber.value == ''" class="btn btn-primary" name="docButton" (click)="getByDocNumber()">Найти</button>
+  </div>
+  <div class="ticket">
+    <p>По номеру перевозочного билета</p>
+    <input type="text" (click)="clearDocNum()" name="ticketNumber" placeholder="Введите номер билета" [(ngModel)]="tNumber" #ticketNumber="ngModel" pattern="[a-zA-Z0-9]{13}" /><br />
+    <div class="check-menu">
+      <input class="check" type="checkbox" name="tChoice" [(ngModel)]="isChecked"/>
+      <label for="tChoice">Все билеты пассажира</label>
+    </div>
+    <button name="ticketButton" [disabled]="ticketNumber.invalid || ticketNumber.value == ''" class="btn btn-primary" (click)="getByTicketNumber()">Найти</button>
+  </div>
+</div>
+
+<div *ngIf="loading == true" class="loaderContainer">
+  <div *ngIf="loading == true" class="loader"></div>
+</div>
+
+<div *ngIf="errorMessage != ''" class="errorMes">
+  <p>{{ errorMessage }}</p>
+</div>
+
+<div *ngIf="tickets.length != 0" class="saveMenu">
+  <button [disabled]="airline == ''" class="btn btn-primary" (click)="toFile()">Сохранить</button>
+  <p>Для авиакомпании:</p>
+  <select name="airlines" [(ngModel)]="airline">
+    <option *ngFor="let airline of airlines" name="airlineIataCode">{{airline.name}} ({{airline.iataCode}})</option>
+  </select>
+</div>
+
+<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="tickets.length != 0">
+  <thead>
+    <tr>
+      <th>Документ</th>
+      <th>Фамилия</th>
+      <th>Имя</th>
+      <th>Отправитель</th>
+      <th>Валидация</th>
+      <th>Дата операции</th>
+      <th>Тип операции</th>
+      <th>Номер билета</th>
+      <th>Время вылета</th>
+      <th>АК</th>
+      <th>Город вылета</th>
+      <th>Город прилёта</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let ticket of tickets">
+      <td>{{ ticket.passengerDocumentNumber }}</td>
+      <td>{{ ticket.surname }}</td>
+      <td>{{ ticket.name }}</td>
+      <td>{{ ticket.sender }}</td>
+      <td>{{ ticket.validationStatus }}</td>
+      <td>{{ ticket.time }}</td>
+      <td>{{ ticket.type }}</td>
+      <td>{{ ticket.ticketNumber }}</td>
+      <td>{{ ticket.departDatetime }}</td>
+      <td>{{ ticket.airlineCode }}</td>
+      <td>{{ ticket.cityFromName }}</td>
+      <td>{{ ticket.cityToName }}</td>
+    </tr>
+  </tbody>
+</table>
